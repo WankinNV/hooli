@@ -31,7 +31,8 @@ async def start(message: types.Message, state: FSMContext):
     media_group.attach_photo(InputMediaPhoto(media=InputFile(image_path)))
     await message.answer_photo(photo=InputFile(image_path),
                                reply_markup= get_like_kb(1))
-    # await message.answer(mreply_markup= get_like_kb(1))
+
+    # await message.answer(text='hello')
     os.remove(image_path)
 
 
