@@ -16,12 +16,14 @@ dp = Dispatcher(bot, storage=storage)
 register_commands_handlers(dp)
 register_like_callbacks(dp)
 
+
 async def set_commands(bot: Bot):
     commands = [
         BotCommand(command="/start", description="go to main menu"),
         BotCommand(command="/help", description="show help"),
     ]
     await bot.set_my_commands(commands)
+
 
 async def main():
     await set_commands(bot)
