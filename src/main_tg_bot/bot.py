@@ -16,9 +16,9 @@ register_commands_handlers(dp)
 register_like_callbacks(dp)
 
 
-#@dp.message_handler(content_types=["photo"])
-#async def ph(msg: types.Message):
-#    await msg.reply(text='Vot eto krasota')
+@dp.message_handler(content_types=["photo"])
+async def ph(msg: types.Message):
+    await msg.reply(text='Vot eto krasota')
 
 
 async def set_commands(bot: Bot):

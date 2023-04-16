@@ -7,7 +7,6 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import InputMediaPhoto, InputFile
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher.filters import ContentTypeFilter
-from aiogram.types import ContentTypes
 
 from src.main_tg_bot.callbacks.like_callbacks import get_like_kb
 from src.main_tg_bot.menu_texts import help_text
@@ -49,18 +48,21 @@ class WaitPhoto(StatesGroup):
 
 
 # @dp.message_handler(content_types=["photo"])
-#не работает, TODO: дописать
+# не работает
 async def photo_start(message: types.Message, state: FSMContext):
-    await state.reset_state(with_data=True)
+    # await state.reset_state(with_data=True)
     await message.answer(text='Send photo and wait for magic')
-    #await WaitPhoto.wait_photo.set()
     await state.set_state(WaitPhoto.wait_photo.state)
 
-    #filter = ContentTypeFilter(['photo'])
-    #message.photo
-    #    await message.answer(text='Красивое')
+
+async def choose_photo(message: types.Message, state: FSMContext):
+    # await ContentTypeFilter(content_types='photo').check(message)
+    await message.reply(text='krasivoe')
+    await state.update_data(upload_photo=message.photo)
+
 
 def register_commands_handlers(dp: Dispatcher):
     dp.register_message_handler(start, commands=["start"], state="*")
     dp.register_message_handler(help, commands=["help"], state="*")
-    dp.register_message_handler(photo_start, commands=["send"])
+    dp.register_message_handler(photo_start, commands=["send"], state="*")
+    dp.register_message_handler(choose_photo, content_types='photo', state=WaitPhoto.wait_photo)
