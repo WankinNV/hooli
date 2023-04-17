@@ -16,16 +16,12 @@ register_commands_handlers(dp)
 register_like_callbacks(dp)
 
 
-@dp.message_handler(content_types=["photo"])
-async def ph(msg: types.Message):
-    await msg.reply(text='Vot eto krasota')
-
-
 async def set_commands(bot: Bot):
     commands = [
         BotCommand(command="/start", description="go to main menu"),
         BotCommand(command="/help", description="show help"),
-        BotCommand(command="/send", description="send photo to hooliGAN")
+        BotCommand(command="/send", description="send photo to hooliGAN"),
+        BotCommand(command="/cancel", description="just cancel")
     ]
     await bot.set_my_commands(commands)
 

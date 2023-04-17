@@ -26,7 +26,8 @@ async def start(message: types.Message, state: FSMContext):
     tmp_dir = 'tmp/'
     os.makedirs(tmp_dir, exist_ok=True)
 
-    image_name = "{0}.jpg".format(str(uuid.uuid4()))  # TODO make img_hash
+    image_name = f"{message.from_user.last_name}_{message.from_user.first_name}_" \
+                 f"{str(uuid.uuid4())}.jpg"  # TODO make img_hash
     image_path = os.path.join(tmp_dir, image_name)
     cv2.imwrite(image_path, img)
     media_group = types.MediaGroup()
@@ -47,22 +48,28 @@ class WaitPhoto(StatesGroup):
     wait_photo = State()
 
 
-# @dp.message_handler(content_types=["photo"])
-# не работает
 async def photo_start(message: types.Message, state: FSMContext):
     # await state.reset_state(with_data=True)
     await message.answer(text='Send photo and wait for magic')
     await state.set_state(WaitPhoto.wait_photo.state)
 
 
+async def cancel(message: types.Message, state: FSMContext):
+    await state.finish()
+    await message.answer("ok, cancel ")
+
+
 async def choose_photo(message: types.Message, state: FSMContext):
-    # await ContentTypeFilter(content_types='photo').check(message)
-    await message.reply(text='krasivoe')
-    await state.update_data(upload_photo=message.photo)
+    await message.answer(text='krasivoe')
+    # await state.update_data(upload_photo=message.photo)
+    await message.answer(str(message.photo[0]['file_id']))
+    #await get_file(message.photo[0]['file_id'])
+    # TODO: попробовать написать сохранеие через апи : https://qna.habr.com/q/699778
 
 
 def register_commands_handlers(dp: Dispatcher):
     dp.register_message_handler(start, commands=["start"], state="*")
+    dp.register_message_handler(cancel, commands=['cancel'], state="*")
     dp.register_message_handler(help, commands=["help"], state="*")
     dp.register_message_handler(photo_start, commands=["send"], state="*")
     dp.register_message_handler(choose_photo, content_types='photo', state=WaitPhoto.wait_photo)
