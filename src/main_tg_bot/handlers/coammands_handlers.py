@@ -3,17 +3,20 @@ import uuid
 
 import cv2
 from aiogram import types, Dispatcher
+from aiogram.bot.bot import Bot
 from aiogram.dispatcher import FSMContext
 from aiogram.types import InputMediaPhoto, InputFile
 from aiogram.dispatcher.filters.state import State, StatesGroup
-from aiogram.dispatcher.filters import ContentTypeFilter
 
+from src.main_tg_bot.configs.bot_configs import bot_config
 from src.main_tg_bot.callbacks.like_callbacks import get_like_kb
 from src.main_tg_bot.menu_texts import help_text
 from src.services.model_inference import ModelInference
 from src.services.services_configs.model_inference_cfg import InferenceConfig
 
 generator = ModelInference(InferenceConfig)
+
+bot = Bot(token=bot_config.token)
 
 
 async def start(message: types.Message, state: FSMContext):
@@ -58,13 +61,18 @@ async def cancel(message: types.Message, state: FSMContext):
     await state.finish()
     await message.answer("ok, cancel ")
 
-
+# обрабатвает только фото, документ-фото - нет
 async def choose_photo(message: types.Message, state: FSMContext):
+    await state.finish()
     await message.answer(text='krasivoe')
-    # await state.update_data(upload_photo=message.photo)
-    await message.answer(str(message.photo[0]['file_id']))
-    #await get_file(message.photo[0]['file_id'])
-    # TODO: попробовать написать сохранеие через апи : https://qna.habr.com/q/699778
+    file_id = str(message.photo[0].file_id)
+    file = await bot.get_file(file_id=file_id)
+    tmp_dir = 'tmp/'
+    os.makedirs(tmp_dir, exist_ok=True)
+    image_name = f"{message.from_user.last_name}_{message.from_user.first_name}_" \
+                 f"{str(uuid.uuid4())[-5:]}.jpg"
+
+    await bot.download_file(file_path=file.file_path, destination=f'./tmp/{image_name}')
 
 
 def register_commands_handlers(dp: Dispatcher):
