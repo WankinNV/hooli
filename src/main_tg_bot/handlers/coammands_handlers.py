@@ -32,6 +32,7 @@ async def start(message: types.Message, state: FSMContext):
     # image_name = f"{message.from_user.last_name}_{message.from_user.first_name}_" \
     #             f"{str(uuid.uuid4())}.jpg"  # TODO make img_hash
     # image_path = os.path.join(tmp_dir, image_name)
+    # Просто отправляю конкретную фотку в тг
     image_path = r'C:\Users\User\Documents\Code\hoolpc\telegram-bot\src\main_tg_bot\tmp\Savelyev_Ivan_22738.jpg'
     # cv2.imwrite(image_path, img)
     media_group = types.MediaGroup()
