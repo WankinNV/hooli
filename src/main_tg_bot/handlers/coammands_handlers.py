@@ -54,7 +54,7 @@ class WaitPhoto(StatesGroup):
 
 
 async def photo_start(message: types.Message, state: FSMContext):
-    # await state.reset_state(with_data=True)
+    await state.reset_state()
     await message.answer(text='Send photo and wait for magic')
     await state.set_state(WaitPhoto.wait_photo.state)
 
@@ -67,25 +67,36 @@ async def cancel(message: types.Message, state: FSMContext):
 # обрабатвает только фото, документ-фото - нет
 async def choose_photo(message: types.Message, state: FSMContext):
     await state.finish()
-    await message.answer(text='krasivoe')
-    file_id = str(message.photo[-1].file_id)
-    file = await bot.get_file(file_id=file_id)
     tmp_dir = 'tmp/'
     os.makedirs(tmp_dir, exist_ok=True)
     image_name = f"{message.from_user.last_name}_{message.from_user.first_name}_" \
                  f"{str(uuid.uuid4())[-5:]}.jpg"
-    await bot.download_file(file_path=file.file_path, destination=f'./{tmp_dir}{image_name}')
+    # Сохраняем фотографию
+    if message.photo:
+        photo_id = str(message.photo[-1].file_id)
+        photo_file = await bot.get_file(file_id=photo_id)
+        await bot.download_file(file_path=photo_file.file_path, destination=f'./{tmp_dir}{image_name}')
+        await message.answer(text='Very Nice!')
+    # Сохраняем фотографию, если она отправлена как документ
+    elif message.content_type == 'document' and message.document['mime_type'] == 'image/jpeg':
+        doc_id = str(message.document['file_id'])
+        doc_file = await bot.get_file(file_id=doc_id)
+        await bot.download_file(file_path=doc_file.file_path, destination=f'./{tmp_dir}{image_name}')
+        await message.answer(text='krasivoe')
+    else:
+        await message.answer(text='Send only photo plz! Use /send again')
 
-
+async def photo_finish(message: types.Message):
+    pass
 async def wrong_type(message: types.Message, state: FSMContext):
-    if message.content_type != 'photo':
-        await message.answer(text='send only PHOTO')
+    if message.content_type == 'text':
+        await message.answer(text='plz send photo')
 
 
 def register_commands_handlers(dp: Dispatcher):
     dp.register_message_handler(start, commands=["start"])
     dp.register_message_handler(cancel, commands=['cancel'], state="*")
     dp.register_message_handler(help, commands=["help"])
+    dp.register_message_handler(photo_start, commands=["send"], state='*')
     dp.register_message_handler(wrong_type, state=WaitPhoto.wait_photo)
-    dp.register_message_handler(photo_start, commands=["send"])
-    dp.register_message_handler(choose_photo, content_types='photo', state=WaitPhoto.wait_photo)
+    dp.register_message_handler(choose_photo, content_types=['photo', 'document'], state=WaitPhoto.wait_photo)
