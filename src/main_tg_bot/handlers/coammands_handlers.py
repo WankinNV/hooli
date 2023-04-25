@@ -13,6 +13,8 @@ from src.main_tg_bot.menu_texts import *
 from src.services.model_inference import ModelInference
 from src.services.services_configs.model_inference_cfg import InferenceConfig
 
+from src.main_tg_bot.handlers.buttons_handlers import *
+
 bot = Bot(token=bot_config.token)
 generator = ModelInference(InferenceConfig)
 
@@ -29,7 +31,7 @@ async def start(message: types.Message, state: FSMContext):
                  f"{str(uuid.uuid4())}.jpg"
     # image_path = os.path.join(tmp_dir, image_name)
     # Просто отправляю конкретную фотку в тг
-    image_path = r'D:\IVAN_DAYUSTAN\SomeCode\Hool_bot\bot_hooligan\src\main_tg_bot\tmp\Savelyev_Ivan_22738.jpg'
+    image_path = './tmp/Savelyev_Ivan_22738.jpg'
     # cv2.imwrite(image_path, img)
     media_group = types.MediaGroup()
     media_group.attach_photo(InputMediaPhoto(media=InputFile(image_path)))
@@ -86,6 +88,7 @@ async def processing_doc_type(message: types.Message, state: FSMContext):
 
 def register_commands_handlers(dp: Dispatcher):
     dp.register_message_handler(start, commands=["start"])
+    dp.register_message_handler(test_buttons, commands=["buttons"])
     dp.register_message_handler(cancel, commands=['cancel'], state=WaitPhoto.wait_photo)
     dp.register_message_handler(help, commands=["help"])
     dp.register_message_handler(photo_start, commands=["send"], state='*')

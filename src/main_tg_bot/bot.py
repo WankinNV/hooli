@@ -21,7 +21,8 @@ async def set_commands(bot: Bot):
         BotCommand(command="/start", description="go to main menu"),
         BotCommand(command="/help", description="show help"),
         BotCommand(command="/send", description="send photo to hooliGAN"),
-        BotCommand(command="/cancel", description="just cancel")
+        BotCommand(command="/cancel", description="just cancel"),
+        BotCommand(command='/buttons', description='testBUTTONS')
     ]
     await bot.set_my_commands(commands)
 
