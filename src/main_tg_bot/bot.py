@@ -5,7 +5,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.types import BotCommand
 
 from src.main_tg_bot.callbacks.like_callbacks import register_like_callbacks
-from src.main_tg_bot.handlers.buttons_handlers import register_testbut_callbacks
+from main_tg_bot.callbacks.buttons_callbacks import register_testbut_callbacks
 from src.main_tg_bot.configs.bot_configs import bot_config
 from src.main_tg_bot.handlers.coammands_handlers import register_commands_handlers
 

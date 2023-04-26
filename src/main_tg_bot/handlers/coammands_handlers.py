@@ -1,7 +1,6 @@
 import os
 import uuid
 
-from aiogram import types, Dispatcher
 from aiogram.bot.bot import Bot
 from aiogram.dispatcher import FSMContext
 from aiogram.types import InputMediaPhoto, InputFile
@@ -13,7 +12,7 @@ from src.main_tg_bot.menu_texts import *
 from src.services.model_inference import ModelInference
 from src.services.services_configs.model_inference_cfg import InferenceConfig
 
-from src.main_tg_bot.handlers.buttons_handlers import *
+from main_tg_bot.callbacks.buttons_callbacks import *
 
 bot = Bot(token=bot_config.token)
 generator = ModelInference(InferenceConfig)
@@ -41,7 +40,10 @@ async def start(message: types.Message, state: FSMContext):
 
 
 async def tb(message: types.Message):
-    await message.answer_photo('./tmp/Savelyev_Ivan_22738.jpg', reply_markup=test_buttons())
+    await message.answer_photo(photo=InputFile('./tmp/Savelyev_Ivan_22738.jpg'), reply_markup=test_buttons(1))
+
+async def tb2(message: types.Message):
+    await message.answer(text='WORKING', reply_markup=test_buttons2())
 
 
 async def help(message: types.Message):
