@@ -40,6 +40,10 @@ async def start(message: types.Message, state: FSMContext):
     # os.remove(image_path)
 
 
+async def tb(message: types.Message):
+    await message.answer_photo('./tmp/Savelyev_Ivan_22738.jpg', reply_markup=test_buttons())
+
+
 async def help(message: types.Message):
     await message.answer(text=help_text)
 
@@ -88,7 +92,7 @@ async def processing_doc_type(message: types.Message, state: FSMContext):
 
 def register_commands_handlers(dp: Dispatcher):
     dp.register_message_handler(start, commands=["start"])
-    dp.register_message_handler(test_buttons, commands=["buttons"])
+    dp.register_message_handler(tb, commands=["buttons"])
     dp.register_message_handler(cancel, commands=['cancel'], state=WaitPhoto.wait_photo)
     dp.register_message_handler(help, commands=["help"])
     dp.register_message_handler(photo_start, commands=["send"], state='*')
