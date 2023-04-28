@@ -9,10 +9,11 @@ from src.main_tg_bot.configs.bot_configs import bot_config
 from src.main_tg_bot.callbacks.like_callbacks import get_like_kb
 from src.main_tg_bot.configs.bot_state import *
 from src.main_tg_bot.menu_texts import *
+
 from src.services.model_inference import ModelInference
 from src.services.services_configs.model_inference_cfg import InferenceConfig
 
-from main_tg_bot.callbacks.buttons_callbacks import *
+from main_tg_bot.callbacks.buttons import *
 
 bot = Bot(token=bot_config.token)
 generator = ModelInference(InferenceConfig)
@@ -39,11 +40,12 @@ async def start(message: types.Message, state: FSMContext):
     # os.remove(image_path)
 
 
-async def tb(message: types.Message):
-    await message.answer_photo(photo=InputFile('./tmp/Savelyev_Ivan_22738.jpg'), reply_markup=test_buttons(1))
+async def start_main_menu(message: types.Message):
+    await message.answer(text='Welcome to HooliGAN bot! Choose:', reply_markup=main_menu_buttons())
 
-async def tb2(message: types.Message):
-    await message.answer(text='WORKING', reply_markup=test_buttons2())
+
+async def start_upload_menu(message: types.Message):
+    await message.answer(text='Choose picture quantity', reply_markup=upload_menu_buttons())
 
 
 async def help(message: types.Message):
@@ -93,8 +95,9 @@ async def processing_doc_type(message: types.Message, state: FSMContext):
 
 
 def register_commands_handlers(dp: Dispatcher):
-    dp.register_message_handler(start, commands=["start"])
-    dp.register_message_handler(tb, commands=["buttons"])
+    # dp.register_message_handler(start, commands=["start"])
+    dp.register_message_handler(start_main_menu, commands=["start"])
+    dp.register_message_handler(start_upload_menu, lambda message: message.text == "Create new model")
     dp.register_message_handler(cancel, commands=['cancel'], state=WaitPhoto.wait_photo)
     dp.register_message_handler(help, commands=["help"])
     dp.register_message_handler(photo_start, commands=["send"], state='*')
