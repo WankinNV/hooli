@@ -27,25 +27,30 @@ async def start(message: types.Message, state: FSMContext):
     await message.answer(text="now we send you some photos")
     # img = generator.generate_img()
     os.makedirs(tmp_dir, exist_ok=True)
-    image_name = f"{message.from_user.last_name}_{message.from_user.first_name}_" \
-                 f"{str(uuid.uuid4())}.jpg"
+    image_name = (
+        f"{message.from_user.last_name}_{message.from_user.first_name}_"
+        f"{str(uuid.uuid4())}.jpg"
+    )
     # image_path = os.path.join(tmp_dir, image_name)
     # Просто отправляю конкретную фотку в тг
-    image_path = './tmp/Savelyev_Ivan_22738.jpg'
+    image_path = "./tmp/Savelyev_Ivan_22738.jpg"
     # cv2.imwrite(image_path, img)
     media_group = types.MediaGroup()
     media_group.attach_photo(InputMediaPhoto(media=InputFile(image_path)))
-    await message.answer_photo(photo=InputFile(image_path),
-                               reply_markup=get_like_kb(1))
+    await message.answer_photo(photo=InputFile(image_path), reply_markup=get_like_kb(1))
     # os.remove(image_path)
 
 
 async def start_main_menu(message: types.Message):
-    await message.answer(text='Welcome to HooliGAN bot! Choose:', reply_markup=main_menu_buttons())
+    await message.answer(
+        text="Welcome to HooliGAN bot! Choose:", reply_markup=main_menu_buttons()
+    )
 
 
 async def start_upload_menu(message: types.Message):
-    await message.answer(text='Choose picture quantity', reply_markup=upload_menu_buttons())
+    await message.answer(
+        text="Choose picture quantity", reply_markup=upload_menu_buttons()
+    )
 
 
 async def help(message: types.Message):
@@ -67,13 +72,17 @@ async def cancel(message: types.Message, state: FSMContext):
 # Функция обработки фото
 async def processing_photo(message: types.Message, state: FSMContext):
     os.makedirs(tmp_dir, exist_ok=True)
-    image_name = f"{message.from_user.last_name}_{message.from_user.first_name}_" \
-                 f"{str(uuid.uuid4())[-5:]}.jpg"
+    image_name = (
+        f"{message.from_user.last_name}_{message.from_user.first_name}_"
+        f"{str(uuid.uuid4())[-5:]}.jpg"
+    )
     # делаем проверку документа на фото и сохраняем
     if message.photo:
         photo_id = str(message.photo[-1].file_id)
         photo_file = await bot.get_file(file_id=photo_id)
-        await bot.download_file(file_path=photo_file.file_path, destination=f'./{tmp_dir}{image_name}')
+        await bot.download_file(
+            file_path=photo_file.file_path, destination=f"./{tmp_dir}{image_name}"
+        )
         await message.answer(text=answer_for_photo_text1)
         await state.finish()
 
@@ -81,13 +90,20 @@ async def processing_photo(message: types.Message, state: FSMContext):
 # Фуункция для обработки документов-фотографий и текста
 async def processing_doc_type(message: types.Message, state: FSMContext):
     os.makedirs(tmp_dir, exist_ok=True)
-    image_name = f"{message.from_user.last_name}_{message.from_user.first_name}_" \
-                 f"{str(uuid.uuid4())[-5:]}.jpg"
+    image_name = (
+        f"{message.from_user.last_name}_{message.from_user.first_name}_"
+        f"{str(uuid.uuid4())[-5:]}.jpg"
+    )
     # делаем проверку документа на фото и сохраняем
-    if message.content_type == 'document' and message.document['mime_type'] == 'image/jpeg':
-        doc_id = str(message.document['file_id'])
+    if (
+        message.content_type == "document"
+        and message.document["mime_type"] == "image/jpeg"
+    ):
+        doc_id = str(message.document["file_id"])
         doc_file = await bot.get_file(file_id=doc_id)
-        await bot.download_file(file_path=doc_file.file_path, destination=f'./{tmp_dir}{image_name}')
+        await bot.download_file(
+            file_path=doc_file.file_path, destination=f"./{tmp_dir}{image_name}"
+        )
         await message.answer(text=answer_for_photo_text2)
         await state.finish()
     else:
@@ -97,10 +113,17 @@ async def processing_doc_type(message: types.Message, state: FSMContext):
 def register_commands_handlers(dp: Dispatcher):
     # dp.register_message_handler(start, commands=["start"])
     dp.register_message_handler(start_main_menu, commands=["start"])
-    dp.register_message_handler(start_upload_menu, lambda message: message.text == "Create new model")
-    dp.register_message_handler(cancel, commands=['cancel'], state=WaitPhoto.wait_photo)
+    dp.register_message_handler(
+        start_upload_menu, lambda message: message.text == "Create new model"
+    )
+    dp.register_message_handler(cancel, commands=["cancel"], state=WaitPhoto.wait_photo)
     dp.register_message_handler(help, commands=["help"])
-    dp.register_message_handler(photo_start, commands=["send"], state='*')
-    dp.register_message_handler(processing_doc_type, content_types=['document', 'text'], state=WaitPhoto.wait_photo)
-    dp.register_message_handler(processing_photo, content_types=['photo'],
-                                state=WaitPhoto.wait_photo)
+    dp.register_message_handler(photo_start, commands=["send"], state="*")
+    dp.register_message_handler(
+        processing_doc_type,
+        content_types=["document", "text"],
+        state=WaitPhoto.wait_photo,
+    )
+    dp.register_message_handler(
+        processing_photo, content_types=["photo"], state=WaitPhoto.wait_photo
+    )

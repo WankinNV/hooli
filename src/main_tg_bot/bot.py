@@ -15,16 +15,16 @@ dp = Dispatcher(bot, storage=storage)
 
 register_commands_handlers(dp)
 register_like_callbacks(dp)
-#register_testbut_callbacks(dp)
+# register_testbut_callbacks(dp)
 
 
 async def set_commands(bot: Bot):
     commands = [
         BotCommand(command="/start", description="Main menu"),
-        #BotCommand(command="/help", description="show help"),
-        #BotCommand(command="/send", description="send photo to hooliGAN"),
-        #BotCommand(command="/cancel", description="just cancel"),
-        #BotCommand(command='/buttons', description='testBUTTONS')
+        # BotCommand(command="/help", description="show help"),
+        # BotCommand(command="/send", description="send photo to hooliGAN"),
+        # BotCommand(command="/cancel", description="just cancel"),
+        # BotCommand(command='/buttons', description='testBUTTONS')
     ]
     await bot.set_my_commands(commands)
 
